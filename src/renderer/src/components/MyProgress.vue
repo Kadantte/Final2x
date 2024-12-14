@@ -11,8 +11,14 @@ import ioPATH from '../utils/IOPath'
 const { t } = useI18n()
 const notification = useNotification()
 const dialog = useDialog()
-const { CommandLOG, logInstRef, StartCommandLock, SrSuccess, ProgressPercentage, deviceList } =
-  storeToRefs(useGlobalSettingsStore())
+const {
+  CommandLOG,
+  logInstRef,
+  StartCommandLock,
+  SrSuccess,
+  ProgressPercentage,
+  openOutputFolder
+} = storeToRefs(useGlobalSettingsStore())
 
 const showLOG = ref(false)
 
@@ -120,11 +126,12 @@ function StartSR(): void {
 
   const command = getFinal2xconfig()
 
-  CommandLOG.value += '\n' + JSON.stringify(deviceList.value) + '\n' + command + '\n'
+  CommandLOG.value += '\n' + command + '\n'
+  CommandLOG.value += 'OPEN OUTPUT FOLDER: ' + openOutputFolder.value + '\n'
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  window.electron.ipcRenderer.send('execute-command', command)
+  window.electron.ipcRenderer.send('execute-command', command, openOutputFolder.value)
 }
 
 function TerminateSR(): void {
